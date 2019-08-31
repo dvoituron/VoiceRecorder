@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -13,6 +14,7 @@ namespace VoiceRecorder
         private Stopwatch _watcher = new Stopwatch();
         private Timer _timer = new Timer() { Interval = 1000 };
         private List<DeviceItem> _allDevices = new List<DeviceItem>();
+        private string _path;
 
         public MainForm()
         {
@@ -20,7 +22,11 @@ namespace VoiceRecorder
 
             this.Text = $"Voice Recorder - v{Assembly.GetExecutingAssembly().GetName().Version.ToString(2)}";
 
+            _path = GetDefaultFolder(); 
+            txtPath.Text = _path;
+
             StartListeningAllDevices();
+
 
             _timer.Tick += (sender, e) => { lblTime.Text = $@"{_watcher.Elapsed:hh\:mm\:ss}"; };
             _timer.Start();
@@ -31,7 +37,7 @@ namespace VoiceRecorder
             // System sound
             var deviceSystem = AddDeviceToPanel(-1);
             StartListening(deviceSystem);
-            
+
             // Connected Devices
             for (int i = 0; i < WaveIn.DeviceCount; i++)
             {
@@ -62,9 +68,9 @@ namespace VoiceRecorder
                     if (device.StreamWriter == null)
                         device.CreateStreamWriter();
 
-                    device.StreamWriter.Write(e.Buffer, 0, e.BytesRecorded);                    
+                    device.StreamWriter.Write(e.Buffer, 0, e.BytesRecorded);
                 }
-                
+
                 WriteProgressSafe(device.Progress, Convert.ToInt32(100 * GetPeakValue(e) / (float)int.MaxValue));
             };
 
@@ -104,8 +110,8 @@ namespace VoiceRecorder
                 Top = ITEMS_MARGIN + index * ITEMS_MARGIN,
                 Minimum = 0,
                 Maximum = 100,
-                Value = 0                
-            };            
+                Value = 0
+            };
 
             // WaveIn
             IWaveIn waveIn;
@@ -127,6 +133,7 @@ namespace VoiceRecorder
                 Progress = pgbDevice,
                 Device = device,
                 WaveIn = waveIn,
+                Folder = _path
             };
         }
 
@@ -179,7 +186,7 @@ namespace VoiceRecorder
         private void BtnRecord_Click(object sender, EventArgs e)
         {
             const int IMAGE_RECORD = 0;
-            const int IMAGE_PAUSE = 1;
+            const int IMAGE_STOP = 1;
 
             if (_isRecording)
             {
@@ -199,16 +206,58 @@ namespace VoiceRecorder
                         item.StreamWriter = null;
                     }
                 }
+
+                Process.Start(_path);
             }
             else
             {
                 // Start the record
                 _watcher.Restart();
-                btnRecord.ImageIndex = IMAGE_PAUSE;
+                btnRecord.ImageIndex = IMAGE_STOP;
                 btnRecord.BackColor = System.Drawing.Color.Red;
                 lblStatus.Text = "Recording";
                 _isRecording = true;
             }
         }
+
+        private void btnPath_Click(object sender, EventArgs e)
+        {
+            string prevpath = folderBrowserDialog1.SelectedPath;
+            folderBrowserDialog1.Reset();
+            folderBrowserDialog1.SelectedPath = _path;
+            folderBrowserDialog1.ShowNewFolderButton = true;
+
+            var dr = folderBrowserDialog1.ShowDialog();
+            if (dr == DialogResult.OK || dr == DialogResult.Yes)
+            {
+                _path = folderBrowserDialog1.SelectedPath;
+                txtPath.Text = _path;
+            }
+            folderBrowserDialog1.SelectedPath = prevpath;
+        }
+
+
+        private string GetDefaultFolder()
+        {
+            var _folder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            _folder = Path.Combine(_folder, "VoiceRecorder");
+
+            try
+            {
+                // If the directory doesn't exist, create it.
+                if (!Directory.Exists(_folder))
+                {
+                    Directory.CreateDirectory(_folder);
+                }
+            }
+            catch (Exception)
+            {
+                // merdouille silently
+            }
+
+            return _folder;
+        }
+
+
     }
 }

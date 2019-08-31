@@ -14,13 +14,15 @@ namespace VoiceRecorder
         public WaveInCapabilities Device { get; set; }
         public IWaveIn WaveIn { get; set; }
         public Stream StreamWriter { get; set; }
+        public string Folder { get; set; }
 
         public Stream CreateStreamWriter()
         {
             var nameFixed = Regex.Replace(Name.Text, "[^a-zA-Z0-9]", "");
             var filename = $@"{DateTime.Now:yyyyMMdd}_{DateTime.Now:HHmmss}_{nameFixed}.mp3";
+            var pathfile = Path.Combine(Folder, filename);
             var format = new WaveFormat(44100, 1);
-            this.StreamWriter = new LameMP3FileWriter(filename, WaveIn.WaveFormat, LAMEPreset.ABR_96);
+            this.StreamWriter = new LameMP3FileWriter(pathfile, WaveIn.WaveFormat, LAMEPreset.ABR_96);
             return this.StreamWriter;
         }
     }
