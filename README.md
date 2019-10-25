@@ -8,6 +8,6 @@ No installation, no configuration:
 2. Run the **VoiceRecorder.exe** application. May be you need to run as an Administrator.
 3. Check all sound cards to be recorded and press the **[REC]** button.
 
->The **mp3 files** are saved in the **same folder** as the application.
+Since v1.1, **mp3 files** are saved in the selected folder (Thanks [tossnet](https://github.com/tossnet)).
 
 ![Screenshot](doc/screenshot.png)
