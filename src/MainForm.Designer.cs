@@ -47,7 +47,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panDevices.Location = new System.Drawing.Point(12, 114);
             this.panDevices.Name = "panDevices";
-            this.panDevices.Size = new System.Drawing.Size(304, 200);
+            this.panDevices.Size = new System.Drawing.Size(304, 184);
             this.panDevices.TabIndex = 2;
             // 
             // btnRecord
@@ -102,6 +102,7 @@
             // 
             this.txtPath.Location = new System.Drawing.Point(12, 86);
             this.txtPath.Name = "txtPath";
+            this.txtPath.ReadOnly = true;
             this.txtPath.Size = new System.Drawing.Size(266, 20);
             this.txtPath.TabIndex = 7;
             // 
@@ -109,7 +110,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(324, 328);
+            this.ClientSize = new System.Drawing.Size(324, 312);
             this.Controls.Add(this.txtPath);
             this.Controls.Add(this.btnPath);
             this.Controls.Add(this.lblStatus);
