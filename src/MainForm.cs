@@ -22,7 +22,7 @@ namespace VoiceRecorder
 
             this.Text = $"Voice Recorder - v{Assembly.GetExecutingAssembly().GetName().Version.ToString(2)}";
 
-            _path = GetDefaultFolder(); 
+            _path = GetDefaultFolder();
             txtPath.Text = _path;
 
             StartListeningAllDevices();
@@ -230,8 +230,10 @@ namespace VoiceRecorder
             var dr = folderBrowserDialog1.ShowDialog();
             if (dr == DialogResult.OK || dr == DialogResult.Yes)
             {
+                StopListeningAllDevices();
                 _path = folderBrowserDialog1.SelectedPath;
                 txtPath.Text = _path;
+                StartListeningAllDevices();
             }
             folderBrowserDialog1.SelectedPath = prevpath;
         }
